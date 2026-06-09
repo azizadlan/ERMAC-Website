@@ -1,558 +1,705 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Ermac Technologies — Smart Retail Pricing, Automated for the GCC</title>
-<link rel="icon" type="image/png" href="favicon.png" />
-<meta name="description" content="Ermac is an end-to-end electronic shelf label (ESL) platform — hardware, software, and integration — purpose-built for supermarkets, pharmacies, and electronics retailers across the Gulf." />
-
-<!-- Fonts: distinctive display (Space-mono style mono for labels) + clean geometric for body -->
+<link rel="icon" type="image/png" href="favicon.png"/>
+<meta name="description" content="Ermac is an end-to-end electronic shelf label platform — hardware, software, and integration — purpose-built for supermarkets, pharmacies, and electronics retailers across the Gulf."/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Space+Mono:wght@400;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
-  :root{
-    --black:#000000;
-    --ink:#05060c;
-    --indigo:#282352;
-    --purple:#623A92;
-    --violet:#662D91;
-    --blue:#348ACA;
-    --teal:#61BDAF;
-    --green:#1FBF8F;
-    --white:#ffffff;
-    --grey:#9aa0b5;
-    --grey-dim:#5a607a;
-    --line:rgba(255,255,255,.08);
-    --cosmic:linear-gradient(100deg,#61BDAF 0%,#348ACA 38%,#623A92 72%,#662D91 100%);
-    --cosmic-rev:linear-gradient(100deg,#662D91 0%,#623A92 28%,#348ACA 62%,#61BDAF 100%);
-    --maxw:1240px;
-    --font-display:'Archivo',sans-serif;
-    --font-body:'Manrope',sans-serif;
-    --font-mono:'Space Mono',monospace;
-  }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    background:var(--ink);
-    color:var(--white);
-    font-family:var(--font-body);
-    overflow-x:hidden;
-    -webkit-font-smoothing:antialiased;
-    line-height:1.5;
-  }
-  ::selection{background:var(--teal);color:#04140f}
-  a{color:inherit;text-decoration:none}
+:root{
+  --black:#000000;
+  --ink:#06060a;
+  --indigo:#282352;
+  --purple:#623A92;
+  --violet:#662D91;
+  --blue:#348ACA;
+  --teal:#61BDAF;
+  /* warm tones derived purely from the brand palette — no new colors */
+  --teal-warm:rgba(97,189,175,.15);
+  --purple-warm:rgba(98,58,146,.2);
+  --white:#ffffff;
+  --offwhite:#f0ece4;
+  --grey:#8a90a8;
+  --grey-dim:#4a506a;
+  --line:rgba(255,255,255,.07);
+  --line-warm:rgba(97,189,175,.12);
+  --cosmic:linear-gradient(110deg,#61BDAF 0%,#348ACA 40%,#623A92 75%,#662D91 100%);
+  --cosmic-text:linear-gradient(110deg,#61BDAF,#348ACA 45%,#9B6FCA);
+  --maxw:1280px;
+  --ff-display:'Archivo',sans-serif;
+  --ff-body:'Manrope',sans-serif;
+  --ff-mono:'Space Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--white);font-family:var(--ff-body);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--teal);color:#03100e}
 
-  /* atmospheric background glows */
-  .bg-field{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-  .bg-field .glow{position:absolute;border-radius:50%;filter:blur(120px);opacity:.5}
-  .bg-field .g1{width:680px;height:680px;background:radial-gradient(circle,#623A92 0%,transparent 70%);top:-180px;right:-120px}
-  .bg-field .g2{width:560px;height:560px;background:radial-gradient(circle,#1a4f6b 0%,transparent 70%);top:38%;left:-180px;opacity:.4}
-  .bg-field .g3{width:600px;height:600px;background:radial-gradient(circle,#61BDAF 0%,transparent 70%);bottom:-200px;left:40%;opacity:.18}
-  .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.04;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+/* ── ATMOSPHERIC BACKGROUND ── */
+.atmos{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+/* warm glow top-right — uses purple from palette */
+.atmos .g1{position:absolute;width:900px;height:900px;border-radius:50%;
+  background:radial-gradient(circle,rgba(102,45,145,.38) 0%,transparent 65%);
+  top:-320px;right:-280px;filter:blur(80px)}
+/* teal glow bottom-left */
+.atmos .g2{position:absolute;width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(97,189,175,.18) 0%,transparent 65%);
+  bottom:-200px;left:-200px;filter:blur(100px)}
+/* blue mid */
+.atmos .g3{position:absolute;width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(52,138,202,.14) 0%,transparent 65%);
+  top:45%;left:35%;filter:blur(90px)}
 
-  /* ---------- NAV ---------- */
-  header.nav{
-    position:fixed;top:0;left:0;right:0;z-index:100;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:18px clamp(20px,5vw,56px);
-    transition:background .4s,backdrop-filter .4s,padding .4s,border-color .4s;
-    border-bottom:1px solid transparent;
-  }
-  header.nav.scrolled{
-    background:rgba(5,6,12,.72);
-    backdrop-filter:blur(16px);
-    border-bottom:1px solid var(--line);
-    padding:12px clamp(20px,5vw,56px);
-  }
-  .nav-logo img{height:26px;width:auto;display:block}
-  .nav-links{display:flex;align-items:center;gap:38px}
-  .nav-links a{
-    font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--grey);position:relative;padding:4px 0;transition:color .25s;
-  }
-  .nav-links a:hover{color:var(--white)}
-  .nav-links a::after{content:"";position:absolute;left:0;bottom:-2px;width:0;height:1px;background:var(--cosmic);transition:width .3s}
-  .nav-links a:hover::after{width:100%}
-  .nav-cta{
-    font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
-    padding:11px 20px;border-radius:6px;color:#04140f;background:var(--teal);
-    transition:transform .25s,box-shadow .25s;font-weight:700;
-  }
-  .nav-cta:hover{transform:translateY(-2px);box-shadow:0 10px 30px -8px rgba(97,189,175,.6)}
-  .burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:6px}
-  .burger span{width:24px;height:2px;background:#fff;transition:.3s}
+/* geometric pattern — mashrabiya-inspired grid using brand teal */
+.geo-pattern{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.032;
+  background-image:
+    linear-gradient(rgba(97,189,175,1) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(97,189,175,1) 1px,transparent 1px),
+    linear-gradient(rgba(97,189,175,.4) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(97,189,175,.4) 1px,transparent 1px);
+  background-size:80px 80px,80px 80px,20px 20px,20px 20px}
 
-  /* ---------- HERO ---------- */
-  .hero{position:relative;z-index:2;min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:20px;
-    padding:140px clamp(20px,5vw,56px) 60px;max-width:var(--maxw);margin:0 auto}
-  .hero-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:11px;
-    letter-spacing:.22em;text-transform:uppercase;color:var(--teal);margin-bottom:26px;
-    opacity:0;transform:translateY(16px);animation:rise .8s .15s forwards}
-  .hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 12px var(--teal);animation:pulse 2s infinite}
-  h1.hero-title{font-family:var(--font-display);font-weight:800;font-size:clamp(2.6rem,5.4vw,4.6rem);
-    line-height:1.02;letter-spacing:-.02em;margin-bottom:26px}
-  h1.hero-title .l1{display:block;color:#fff;opacity:0;transform:translateY(22px);animation:rise .9s .3s forwards}
-  h1.hero-title .l2{display:block;background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent;
-    opacity:0;transform:translateY(22px);animation:rise .9s .45s forwards}
-  .hero-sub{font-size:clamp(1rem,1.3vw,1.18rem);color:var(--grey);max-width:520px;margin-bottom:38px;
-    opacity:0;transform:translateY(20px);animation:rise .9s .6s forwards}
-  .hero-actions{display:flex;gap:16px;flex-wrap:wrap;opacity:0;transform:translateY(20px);animation:rise .9s .75s forwards}
-  .btn{font-family:var(--font-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;
-    padding:15px 28px;border-radius:8px;font-weight:700;transition:transform .25s,box-shadow .25s,background .25s;cursor:pointer;border:none}
-  .btn-primary{background:var(--cosmic);color:#04140f;background-size:160% 160%;animation:shift 6s ease infinite}
-  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 16px 40px -12px rgba(52,138,202,.7)}
-  .btn-ghost{background:transparent;color:#fff;border:1px solid var(--line)}
-  .btn-ghost:hover{border-color:var(--teal);transform:translateY(-3px)}
+/* diagonal brand slash accent — echoes the logo's slash motif */
+.slash-accent{position:fixed;top:0;right:0;width:500px;height:100vh;z-index:0;pointer-events:none;
+  background:linear-gradient(170deg,rgba(97,189,175,.04) 0%,transparent 50%);
+  clip-path:polygon(40% 0,100% 0,100% 100%,0% 100%)}
 
-  /* metrics strip under hero text */
-  .hero-metrics{display:flex;gap:34px;margin-top:46px;opacity:0;transform:translateY(20px);animation:rise .9s .9s forwards}
-  .hero-metrics .m .v{font-family:var(--font-display);font-weight:800;font-size:1.7rem;line-height:1}
-  .hero-metrics .m .v .grad{background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero-metrics .m .k{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey-dim);margin-top:6px}
+/* ── NAV ── */
+header{position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px clamp(20px,5vw,60px);
+  transition:all .4s;border-bottom:1px solid transparent}
+header.scrolled{background:rgba(6,6,10,.8);backdrop-filter:blur(20px);
+  padding:14px clamp(20px,5vw,60px);border-bottom:1px solid var(--line-warm)}
+.nav-logo img{height:28px;width:auto;display:block}
+.nav-links{display:flex;align-items:center;gap:40px}
+.nav-links a{font-family:var(--ff-mono);font-size:11.5px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--grey);transition:color .25s;position:relative;padding-bottom:3px}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;
+  background:var(--cosmic);transition:width .3s}
+.nav-links a:hover{color:#fff}
+.nav-links a:hover::after{width:100%}
+.nav-cta{font-family:var(--ff-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+  padding:12px 22px;border-radius:6px;font-weight:700;
+  background:transparent;border:1px solid var(--teal);color:var(--teal);
+  transition:all .25s;cursor:pointer}
+.nav-cta:hover{background:var(--teal);color:#03100e;transform:translateY(-2px);
+  box-shadow:0 8px 28px -8px rgba(97,189,175,.5)}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:6px}
+.burger span{width:24px;height:1.5px;background:#fff;transition:.3s;display:block}
 
-  /* 3D stage */
-  .stage-wrap{position:relative;height:560px;display:flex;align-items:center;justify-content:center}
-  #stage{position:absolute;inset:0;width:100%;height:100%}
-  .stage-ring{position:absolute;width:420px;height:420px;border:1px solid var(--line);border-radius:50%;
-    top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
-  .stage-ring.r2{width:560px;height:560px;border-color:rgba(255,255,255,.04)}
-  .device-tag{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
-    font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--grey);display:flex;align-items:center;gap:14px;z-index:5}
-  .device-tag .swatch{display:flex;gap:7px}
-  .device-tag .swatch button{width:8px;height:8px;border-radius:50%;border:none;background:rgba(255,255,255,.25);cursor:pointer;transition:.3s;padding:0}
-  .device-tag .swatch button.active{background:var(--teal);box-shadow:0 0 10px var(--teal);width:22px;border-radius:4px}
-  .device-name{min-width:78px;color:#fff;font-weight:700}
+/* ── HERO ── */
+.hero{position:relative;z-index:2;min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:100px clamp(20px,5vw,60px) 40px;text-align:center;overflow:hidden}
 
-  /* ---------- SECTION SHELL ---------- */
-  section{position:relative;z-index:2}
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,56px)}
-  .sec-pad{padding:clamp(80px,11vh,140px) 0}
-  .sec-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:20px}
-  h2.sec-title{font-family:var(--font-display);font-weight:800;font-size:clamp(2rem,4vw,3.2rem);line-height:1.05;letter-spacing:-.02em;margin-bottom:22px}
-  h2.sec-title .grad{background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .sec-intro{color:var(--grey);max-width:620px;font-size:1.06rem}
+/* top kicker */
+.hero-kicker{display:inline-flex;align-items:center;gap:10px;margin-bottom:22px;
+  font-family:var(--ff-mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--teal);border:1px solid var(--line-warm);border-radius:100px;
+  padding:8px 18px;background:rgba(97,189,175,.06);
+  opacity:0;animation:fadeUp .8s .1s forwards}
+.hero-kicker .pulse{width:6px;height:6px;border-radius:50%;background:var(--teal);
+  box-shadow:0 0 0 0 rgba(97,189,175,.5);animation:ripple 2s infinite}
 
-  /* reveal on scroll */
-  .reveal{opacity:0;transform:translateY(34px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
-  .reveal.in{opacity:1;transform:none}
+.hero-title{font-family:var(--ff-display);font-weight:900;
+  font-size:clamp(2.8rem,6vw,5.2rem);line-height:1;letter-spacing:-.03em;
+  margin-bottom:20px;max-width:900px}
+.hero-title .line1{display:block;color:#fff;opacity:0;animation:fadeUp .9s .25s forwards}
+.hero-title .line2{display:block;background:var(--cosmic-text);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  opacity:0;animation:fadeUp .9s .4s forwards}
 
-  /* ---------- PROBLEM STATS ---------- */
-  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:54px}
-  .stat-card{border:1px solid var(--line);border-radius:16px;padding:28px 24px;background:linear-gradient(160deg,rgba(255,255,255,.03),rgba(255,255,255,0));
-    position:relative;overflow:hidden;transition:transform .4s,border-color .4s}
-  .stat-card:hover{transform:translateY(-6px);border-color:rgba(97,189,175,.3)}
-  .stat-card .tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--grey-dim);margin-bottom:18px}
-  .stat-card .big{font-family:var(--font-display);font-weight:800;font-size:2.9rem;line-height:1;
-    background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:14px}
-  .stat-card p{font-size:.92rem;color:var(--grey)}
-  .stat-card.np .big{background:linear-gradient(100deg,#fff,#c9d2ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-sub{font-size:clamp(1rem,1.4vw,1.2rem);color:var(--grey);
+  max-width:580px;margin:0 auto 32px;line-height:1.7;
+  opacity:0;animation:fadeUp .9s .55s forwards}
 
-  /* ---------- SOLUTION / STACK ---------- */
-  .stack-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:54px}
-  .layer{border:1px solid var(--line);border-radius:16px;padding:30px 26px;background:rgba(255,255,255,.02);
-    position:relative;transition:transform .4s,border-color .4s,background .4s}
-  .layer:hover{transform:translateY(-6px);border-color:rgba(52,138,202,.4);background:rgba(52,138,202,.05)}
-  .layer .lyr{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:16px}
-  .layer h3{font-family:var(--font-display);font-weight:700;font-size:1.45rem;margin-bottom:12px}
-  .layer p{font-size:.92rem;color:var(--grey);margin-bottom:18px}
-  .layer .metric{border-top:1px solid var(--line);padding-top:16px}
-  .layer .metric .mv{font-family:var(--font-display);font-weight:800;font-size:1.6rem}
-  .layer .metric .mk{font-family:var(--font-mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey-dim);margin-top:4px}
-  .flow-line{margin-top:36px;font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;color:var(--grey-dim);text-align:center}
-  .flow-line b{color:var(--teal)}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+  margin-bottom:50px;opacity:0;animation:fadeUp .9s .7s forwards}
+.btn{font-family:var(--ff-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  padding:16px 30px;border-radius:8px;font-weight:700;cursor:pointer;border:none;transition:all .25s}
+.btn-fill{background:var(--cosmic);color:#03100e;background-size:200%;animation:shimmer 5s infinite}
+.btn-fill:hover{transform:translateY(-3px);box-shadow:0 14px 36px -10px rgba(52,138,202,.6)}
+.btn-outline{background:transparent;color:#fff;border:1px solid var(--line)}
+.btn-outline:hover{border-color:rgba(97,189,175,.5);transform:translateY(-3px)}
 
-  /* ---------- WHY ERMAC ---------- */
-  .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:54px}
-  .moat{border:1px solid var(--line);border-radius:16px;padding:34px;display:flex;gap:24px;background:rgba(255,255,255,.02);
-    transition:transform .4s,border-color .4s}
-  .moat:hover{transform:translateY(-5px);border-color:rgba(102,45,145,.5)}
-  .moat .num{font-family:var(--font-display);font-weight:800;font-size:2.6rem;line-height:1;
-    background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent;flex-shrink:0}
-  .moat h3{font-family:var(--font-display);font-weight:700;font-size:1.3rem;margin-bottom:10px}
-  .moat p{font-size:.94rem;color:var(--grey)}
+/* ── DEVICE STAGE ── */
+.device-stage{position:relative;width:100%;max-width:1000px;margin:0 auto;
+  opacity:0;animation:fadeUp 1s .85s forwards}
 
-  /* ---------- TRACTION BANNER ---------- */
-  .traction{border:1px solid var(--line);border-radius:20px;margin-top:54px;overflow:hidden;
-    background:linear-gradient(120deg,rgba(40,35,82,.5),rgba(5,6,12,.2));display:grid;grid-template-columns:repeat(3,1fr)}
-  .traction .t{padding:40px 34px;border-right:1px solid var(--line)}
-  .traction .t:last-child{border-right:none}
-  .traction .t .k{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:14px}
-  .traction .t .v{font-family:var(--font-display);font-weight:800;font-size:2.2rem;line-height:1;margin-bottom:12px}
-  .traction .t p{font-size:.9rem;color:var(--grey)}
+/* outer glow ring */
+.stage-halo{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:110%;height:300px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(97,189,175,.12) 0%,transparent 65%);
+  pointer-events:none;filter:blur(30px)}
 
-  /* ---------- CTA ---------- */
-  .cta-band{position:relative;z-index:2;text-align:center;padding:clamp(90px,14vh,150px) clamp(20px,5vw,56px);overflow:hidden}
-  .cta-band h2{font-family:var(--font-display);font-weight:900;font-size:clamp(2.2rem,5vw,4rem);line-height:1.02;letter-spacing:-.02em;margin-bottom:22px}
-  .cta-band h2 .grad{background:var(--cosmic);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .cta-band p{color:var(--grey);max-width:560px;margin:0 auto 38px;font-size:1.1rem}
+/* device switcher */
+.device-wrap{position:relative;display:flex;align-items:center;justify-content:center;
+  perspective:1200px;min-height:280px}
 
-  /* ---------- FOOTER ---------- */
-  footer{position:relative;z-index:2;border-top:1px solid var(--line);padding:64px clamp(20px,5vw,56px) 40px;margin-top:40px}
-  .foot-grid{max-width:var(--maxw);margin:0 auto;display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
-  .foot-logo img{height:30px;margin-bottom:20px}
-  .foot-grid p{color:var(--grey);font-size:.92rem;max-width:300px}
-  .foot-col h4{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--grey-dim);margin-bottom:18px}
-  .foot-col a{display:block;color:var(--grey);font-size:.94rem;margin-bottom:12px;transition:color .25s}
-  .foot-col a:hover{color:var(--teal)}
-  .foot-bottom{max-width:var(--maxw);margin:0 auto;border-top:1px solid var(--line);padding-top:26px;display:flex;justify-content:space-between;
-    font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;color:var(--grey-dim);flex-wrap:wrap;gap:12px}
+.device-img{position:absolute;transition:opacity .7s, transform .7s;
+  transform-style:preserve-3d;cursor:pointer}
+.device-img.active{opacity:1;position:relative}
+.device-img.hidden{opacity:0;pointer-events:none;transform:scale(.9) rotateY(15deg)}
 
-  /* ---------- ANIMATIONS ---------- */
-  @keyframes rise{to{opacity:1;transform:none}}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-  @keyframes shift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+/* ERT01 — the long bar */
+#dev-ert{
+  width:min(900px,92vw);
+  filter:drop-shadow(0 30px 60px rgba(0,0,0,.7)) drop-shadow(0 0 40px rgba(97,189,175,.2));
+  transform:perspective(1000px) rotateX(6deg) rotateY(-4deg);
+  animation:floatBar 5s ease-in-out infinite}
 
-  /* ---------- RESPONSIVE ---------- */
-  @media(max-width:980px){
-    .hero{grid-template-columns:1fr;text-align:left;padding-top:120px}
-    .stage-wrap{height:420px;order:-1}
-    .stat-grid,.stack-grid{grid-template-columns:repeat(2,1fr)}
-    .why-grid{grid-template-columns:1fr}
-    .traction{grid-template-columns:1fr}
-    .traction .t{border-right:none;border-bottom:1px solid var(--line)}
-    .foot-grid{grid-template-columns:1fr 1fr}
-    .nav-links{display:none}
-    .nav-links.open{display:flex;position:absolute;top:100%;right:0;left:0;flex-direction:column;gap:0;
-      background:rgba(5,6,12,.96);backdrop-filter:blur(16px);padding:20px;border-bottom:1px solid var(--line)}
-    .nav-links.open a{padding:14px 0;border-bottom:1px solid var(--line)}
-    .burger{display:flex}
-  }
-  @media(max-width:560px){
-    .stat-grid,.stack-grid{grid-template-columns:1fr}
-    .foot-grid{grid-template-columns:1fr}
-    .hero-metrics{flex-wrap:wrap;gap:24px}
-  }
+/* ZTag01 — compact tag */
+#dev-ztag{
+  width:min(320px,70vw);
+  filter:drop-shadow(0 30px 60px rgba(0,0,0,.7)) drop-shadow(0 0 40px rgba(98,58,146,.3));
+  transform:perspective(1000px) rotateX(4deg) rotateY(-6deg);
+  animation:floatTag 5s ease-in-out infinite}
+
+/* device label + switcher dots */
+.device-controls{display:flex;align-items:center;justify-content:center;gap:20px;
+  margin-top:32px;font-family:var(--ff-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.dev-name{color:#fff;font-weight:700;min-width:70px;text-align:center;transition:opacity .3s}
+.dev-subtitle{color:var(--grey);font-size:10px}
+.dev-dots{display:flex;gap:8px}
+.dev-dot{width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(255,255,255,.2);transition:all .3s;padding:0}
+.dev-dot.on{background:var(--teal);box-shadow:0 0 12px var(--teal);width:24px;border-radius:4px}
+
+/* ── SCROLL INDICATOR ── */
+.scroll-hint{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-family:var(--ff-mono);font-size:10px;letter-spacing:.18em;color:var(--grey-dim);
+  opacity:0;animation:fadeUp .8s 1.4s forwards}
+.scroll-hint .line{width:1px;height:40px;background:linear-gradient(var(--teal),transparent);
+  animation:scrollPulse 2s ease-in-out infinite}
+
+/* ── SECTION BASE ── */
+section{position:relative;z-index:2}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(20px,5vw,60px)}
+.sec{padding:clamp(90px,13vh,160px) 0}
+.sec-label{font-family:var(--ff-mono);font-size:10.5px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--teal);margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.sec-label::before{content:'';width:28px;height:1px;background:var(--teal);display:block}
+h2{font-family:var(--ff-display);font-weight:800;
+  font-size:clamp(2rem,4vw,3.4rem);line-height:1.04;letter-spacing:-.025em;margin-bottom:20px}
+h2 .grad{background:var(--cosmic-text);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sec-intro{color:var(--grey);max-width:580px;font-size:1.06rem;line-height:1.7}
+
+/* scroll reveal */
+.r{opacity:0;transform:translateY(32px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+.r.in{opacity:1;transform:none}
+.r.d1{transition-delay:.1s}.r.d2{transition-delay:.2s}.r.d3{transition-delay:.3s}.r.d4{transition-delay:.4s}
+
+/* ── TICKER BAND ── */
+.ticker{border-top:1px solid var(--line-warm);border-bottom:1px solid var(--line-warm);
+  padding:20px 0;overflow:hidden;position:relative;z-index:2;
+  background:linear-gradient(90deg,rgba(97,189,175,.04),transparent,rgba(97,189,175,.04))}
+.ticker-inner{display:flex;gap:60px;white-space:nowrap;animation:ticker 25s linear infinite}
+.ticker-inner span{font-family:var(--ff-mono);font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--grey-dim);display:flex;align-items:center;gap:10px}
+.ticker-inner span b{color:var(--teal)}
+.ticker-inner .sep{color:var(--purple);font-size:16px}
+
+/* ── PROBLEM SECTION ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  margin-top:60px;border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.stat-card{padding:38px 30px;background:rgba(255,255,255,.015);
+  border-right:1px solid var(--line);transition:background .4s}
+.stat-card:last-child{border-right:none}
+.stat-card:hover{background:rgba(97,189,175,.04)}
+.stat-card .tag{font-family:var(--ff-mono);font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--grey-dim);margin-bottom:20px}
+.stat-card .num{font-family:var(--ff-display);font-weight:900;font-size:3.2rem;
+  line-height:1;background:var(--cosmic-text);-webkit-background-clip:text;
+  background-clip:text;color:transparent;margin-bottom:16px}
+.stat-card:last-child .num{background:none;-webkit-background-clip:initial;
+  background-clip:initial;color:#fff}
+.stat-card p{font-size:.9rem;color:var(--grey);line-height:1.6}
+
+/* ── SOLUTION LAYERS ── */
+.layers{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:60px}
+.layer{border:1px solid var(--line);border-radius:16px;padding:32px 26px;
+  background:rgba(255,255,255,.02);transition:all .4s;position:relative;overflow:hidden}
+.layer::before{content:'';position:absolute;inset:0;background:linear-gradient(160deg,
+  rgba(97,189,175,.05),transparent);opacity:0;transition:opacity .4s}
+.layer:hover{border-color:rgba(52,138,202,.3);transform:translateY(-5px)}
+.layer:hover::before{opacity:1}
+.layer .lnum{font-family:var(--ff-mono);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--teal);margin-bottom:18px}
+.layer h3{font-family:var(--ff-display);font-weight:700;font-size:1.4rem;margin-bottom:12px}
+.layer p{font-size:.9rem;color:var(--grey);line-height:1.6;margin-bottom:22px}
+.layer .kpi{border-top:1px solid var(--line);padding-top:18px}
+.layer .kpi-val{font-family:var(--ff-display);font-weight:800;font-size:1.7rem}
+.layer .kpi-lbl{font-family:var(--ff-mono);font-size:9px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--grey-dim);margin-top:4px}
+.flow{margin-top:32px;text-align:center;font-family:var(--ff-mono);font-size:10.5px;
+  letter-spacing:.14em;color:var(--grey-dim)}
+.flow b{color:var(--teal)}
+
+/* ── WHY ERMAC ── */
+.moats{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:60px}
+.moat{border:1px solid var(--line);border-radius:16px;padding:38px;
+  display:flex;gap:26px;background:rgba(255,255,255,.018);transition:all .4s}
+.moat:hover{border-color:rgba(102,45,145,.4);background:rgba(102,45,145,.04);transform:translateY(-4px)}
+.moat-num{font-family:var(--ff-display);font-weight:900;font-size:3rem;line-height:1;
+  background:var(--cosmic-text);-webkit-background-clip:text;background-clip:text;
+  color:transparent;flex-shrink:0;width:60px}
+.moat h3{font-family:var(--ff-display);font-weight:700;font-size:1.25rem;margin-bottom:10px}
+.moat p{font-size:.92rem;color:var(--grey);line-height:1.6}
+
+/* ── TRACTION ── */
+.traction-grid{display:grid;grid-template-columns:repeat(3,1fr);
+  margin-top:60px;border:1px solid var(--line-warm);border-radius:20px;overflow:hidden}
+.trac{padding:44px 38px;border-right:1px solid var(--line-warm);
+  background:linear-gradient(160deg,rgba(40,35,82,.3),rgba(6,6,10,.1));transition:background .4s}
+.trac:last-child{border-right:none}
+.trac:hover{background:linear-gradient(160deg,rgba(40,35,82,.5),rgba(6,6,10,.2))}
+.trac .tk{font-family:var(--ff-mono);font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--teal);margin-bottom:16px}
+.trac .tv{font-family:var(--ff-display);font-weight:900;font-size:2.4rem;
+  line-height:1;margin-bottom:14px}
+.trac p{font-size:.9rem;color:var(--grey);line-height:1.6}
+
+/* ── PRODUCTS DEEP-DIVE ── */
+.prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:60px}
+.prod{border:1px solid var(--line);border-radius:20px;overflow:hidden;
+  background:rgba(255,255,255,.018);transition:all .4s}
+.prod:hover{border-color:rgba(97,189,175,.25);transform:translateY(-4px)}
+.prod-img{padding:40px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg,rgba(40,35,82,.4),rgba(6,6,10,.6));min-height:200px}
+.prod-img img{max-width:100%;max-height:160px;object-fit:contain;
+  filter:drop-shadow(0 16px 32px rgba(0,0,0,.6))}
+#prod-ert .prod-img img{max-height:90px;max-width:560px}
+.prod-body{padding:32px}
+.prod-tag{font-family:var(--ff-mono);font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--teal);margin-bottom:14px}
+.prod h3{font-family:var(--ff-display);font-weight:800;font-size:1.8rem;margin-bottom:10px}
+.prod .prod-line{font-size:.95rem;color:var(--grey);margin-bottom:24px;line-height:1.6}
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.spec{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.spec .sv{font-family:var(--ff-display);font-weight:700;font-size:1rem}
+.spec .sk{font-family:var(--ff-mono);font-size:9.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--grey-dim);margin-top:3px}
+
+/* ── CTA BAND ── */
+.cta{position:relative;z-index:2;text-align:center;
+  padding:clamp(100px,16vh,180px) clamp(20px,5vw,60px);overflow:hidden}
+.cta::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(40,35,82,.4),transparent);
+  pointer-events:none}
+.cta-inner{position:relative}
+.cta h2{font-size:clamp(2.4rem,5.5vw,4.4rem);margin-bottom:22px}
+.cta p{color:var(--grey);max-width:540px;margin:0 auto 40px;font-size:1.08rem;line-height:1.7}
+
+/* ── FOOTER ── */
+footer{position:relative;z-index:2;border-top:1px solid var(--line);
+  padding:70px clamp(20px,5vw,60px) 40px}
+.foot{max-width:var(--maxw);margin:0 auto}
+.foot-top{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:48px;margin-bottom:60px}
+.foot-brand img{height:30px;margin-bottom:22px}
+.foot-brand p{font-size:.9rem;color:var(--grey);max-width:280px;line-height:1.7}
+.foot-col h4{font-family:var(--ff-mono);font-size:10.5px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--grey-dim);margin-bottom:20px}
+.foot-col a{display:block;font-size:.92rem;color:var(--grey);margin-bottom:13px;transition:color .25s}
+.foot-col a:hover{color:var(--teal)}
+.foot-bottom{border-top:1px solid var(--line);padding-top:28px;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  font-family:var(--ff-mono);font-size:10.5px;letter-spacing:.08em;color:var(--grey-dim)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{to{opacity:1;transform:none}}
+@keyframes ripple{0%,100%{box-shadow:0 0 0 0 rgba(97,189,175,.5)}70%{box-shadow:0 0 0 8px rgba(97,189,175,0)}}
+@keyframes shimmer{0%,100%{background-position:0%}50%{background-position:100%}}
+@keyframes scrollPulse{0%,100%{opacity:.4;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.15)}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes floatBar{
+  0%,100%{transform:perspective(1000px) rotateX(6deg) rotateY(-4deg) translateY(0)}
+  50%{transform:perspective(1000px) rotateX(4deg) rotateY(-6deg) translateY(-14px)}}
+@keyframes floatTag{
+  0%,100%{transform:perspective(1000px) rotateX(4deg) rotateY(-6deg) translateY(0)}
+  50%{transform:perspective(1000px) rotateX(6deg) rotateY(-3deg) translateY(-16px)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .layers{grid-template-columns:repeat(2,1fr)}
+  .moats{grid-template-columns:1fr}
+  .traction-grid{grid-template-columns:1fr}
+  .trac{border-right:none;border-bottom:1px solid var(--line-warm)}
+  .trac:last-child{border-bottom:none}
+  .prod-grid{grid-template-columns:1fr}
+  .foot-top{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+  .nav-links.open{display:flex;flex-direction:column;gap:0;position:absolute;
+    top:100%;left:0;right:0;background:rgba(6,6,10,.97);backdrop-filter:blur(20px);
+    padding:20px clamp(20px,5vw,60px);border-bottom:1px solid var(--line-warm)}
+  .nav-links.open a{padding:14px 0;border-bottom:1px solid var(--line)}
+  .burger{display:flex}
+}
+@media(max-width:600px){
+  .stat-grid,.layers{grid-template-columns:1fr}
+  .foot-top{grid-template-columns:1fr}
+  .specs{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
-<div class="bg-field"><div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div></div>
-<div class="grain"></div>
+<div class="atmos"><div class="g1"></div><div class="g2"></div><div class="g3"></div></div>
+<div class="geo-pattern"></div>
+<div class="slash-accent"></div>
 
 <!-- NAV -->
-<header class="nav" id="nav">
-  <a href="#top" class="nav-logo"><img src="assets/ermac_wordmark_white.png" alt="Ermac Technologies" /></a>
+<header id="nav">
+  <a href="#top" class="nav-logo"><img src="assets/ermac_wordmark_white.png" alt="Ermac Technologies"/></a>
   <nav class="nav-links" id="navlinks">
     <a href="#solutions">Solutions</a>
     <a href="#why">Why Ermac</a>
     <a href="#products">Products</a>
     <a href="#contact" class="nav-cta">Book a Demo</a>
   </nav>
-  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  <button class="burger" id="burger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </header>
 
 <!-- HERO -->
 <section class="hero" id="top">
-  <div class="hero-copy">
-    <span class="hero-eyebrow"><span class="dot"></span>Electronic Shelf Labels · UAE · GCC</span>
-    <h1 class="hero-title">
-      <span class="l1">Smart retail pricing,</span>
-      <span class="l2">automated for the GCC.</span>
-    </h1>
-    <p class="hero-sub">Ermac is an end-to-end electronic shelf label platform — hardware, software, and integration — pushing a price change to every shelf in under 90 seconds. Purpose-built for supermarkets, pharmacies, and electronics retailers across the Gulf.</p>
-    <div class="hero-actions">
-      <a href="#contact" class="btn btn-primary">Book a Demo</a>
-      <a href="#solutions" class="btn btn-ghost">Explore the Platform</a>
+  <div class="hero-kicker">
+    <span class="pulse"></span>
+    Electronic Shelf Labels &nbsp;·&nbsp; UAE &nbsp;·&nbsp; GCC
+  </div>
+
+  <h1 class="hero-title">
+    <span class="line1">Smart retail pricing,</span>
+    <span class="line2">automated for the GCC.</span>
+  </h1>
+
+  <p class="hero-sub">
+    An end-to-end ESL platform — hardware, software, and integration — pushing a price change to every shelf in under 90 seconds. Purpose-built for the Gulf.
+  </p>
+
+  <div class="hero-btns">
+    <a href="#contact" class="btn btn-fill">Book a Demo</a>
+    <a href="#solutions" class="btn btn-outline">Explore the Platform</a>
+  </div>
+
+  <!-- DEVICE STAGE -->
+  <div class="device-stage">
+    <div class="stage-halo"></div>
+    <div class="device-wrap">
+      <img id="dev-ert" class="device-img active" src="assets/ert01.png" alt="ERT01 — World's first five-screen ESL"/>
+      <img id="dev-ztag" class="device-img hidden" src="assets/ztag01.png" alt="ZTag01 — 2.66-inch ESL"/>
     </div>
-    <div class="hero-metrics">
-      <div class="m"><div class="v"><span class="grad">&lt;90s</span></div><div class="k">Price update, chain-wide</div></div>
-      <div class="m"><div class="v"><span class="grad">5–7yr</span></div><div class="k">Battery life per tag</div></div>
-      <div class="m"><div class="v"><span class="grad">18–24d</span></div><div class="k">Deploy per store</div></div>
+    <div class="device-controls">
+      <div>
+        <div class="dev-name" id="devName">ERT01</div>
+        <div class="dev-subtitle" id="devSub">World's first 5-screen ESL</div>
+      </div>
+      <div class="dev-dots">
+        <button class="dev-dot on" data-i="0" aria-label="ERT01"></button>
+        <button class="dev-dot" data-i="1" aria-label="ZTag01"></button>
+      </div>
     </div>
   </div>
 
-  <div class="stage-wrap">
-    <div class="stage-ring r2"></div>
-    <div class="stage-ring"></div>
-    <canvas id="stage"></canvas>
-    <div class="device-tag">
-      <span class="device-name" id="deviceName">ERT01</span>
-      <span class="swatch">
-        <button class="active" data-dev="0" aria-label="Show ERT01"></button>
-        <button data-dev="1" aria-label="Show ZTag01"></button>
-      </span>
-    </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="line"></div>
   </div>
 </section>
 
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-inner" id="ticker">
+    <span><b>&lt;90s</b> Price update chain-wide</span>
+    <span class="sep">◆</span>
+    <span><b>5–7yr</b> Battery life per tag</span>
+    <span class="sep">◆</span>
+    <span><b>18–24d</b> Deployment per store</span>
+    <span class="sep">◆</span>
+    <span><b>$1.24B</b> GCC smart retail TAM 2030</span>
+    <span class="sep">◆</span>
+    <span><b>8.3%</b> Paper-tag pricing error rate</span>
+    <span class="sep">◆</span>
+    <span><b>23.4% CAGR</b> ESL adoption in GCC</span>
+    <span class="sep">◆</span>
+    <span><b>&lt;6%</b> Current ESL penetration in GCC</span>
+    <span class="sep">◆</span>
+    <!-- duplicate for seamless loop -->
+    <span><b>&lt;90s</b> Price update chain-wide</span>
+    <span class="sep">◆</span>
+    <span><b>5–7yr</b> Battery life per tag</span>
+    <span class="sep">◆</span>
+    <span><b>18–24d</b> Deployment per store</span>
+    <span class="sep">◆</span>
+    <span><b>$1.24B</b> GCC smart retail TAM 2030</span>
+    <span class="sep">◆</span>
+    <span><b>8.3%</b> Paper-tag pricing error rate</span>
+    <span class="sep">◆</span>
+    <span><b>23.4% CAGR</b> ESL adoption in GCC</span>
+    <span class="sep">◆</span>
+    <span><b>&lt;6%</b> Current ESL penetration in GCC</span>
+    <span class="sep">◆</span>
+  </div>
+</div>
+
 <!-- PROBLEM -->
-<section class="sec-pad" id="problem">
+<section class="sec" id="problem">
   <div class="wrap">
-    <div class="reveal">
-      <div class="sec-label">01 — The Problem</div>
-      <h2 class="sec-title">GCC retail still prices its shelves <span class="grad">like it's 1995.</span></h2>
+    <div class="r"><div class="sec-label">The Problem</div></div>
+    <div class="r d1">
+      <h2>GCC retail still prices its shelves <span class="grad">like it's 1995.</span></h2>
       <p class="sec-intro">The average GCC supermarket changes 3,000–8,000 paper price tags every week. Manually. By hand. With clipboards.</p>
     </div>
     <div class="stat-grid">
-      <div class="stat-card reveal"><div class="tag">Labor Cost</div><div class="big">~36hrs</div><p>spent every week per store on paper tag swaps — at AED 25/hr that's AED 47K+/year, per store.</p></div>
-      <div class="stat-card reveal"><div class="tag">Pricing Errors</div><div class="big">8.3%</div><p>of paper-tag SKUs mismatch the POS at any moment — driving lost margin, refunds, and eroded trust.</p></div>
-      <div class="stat-card reveal"><div class="tag">Promo Lag</div><div class="big">48hrs</div><p>average delay to roll a price campaign across a 40-store chain — by then the competitor moved twice.</p></div>
-      <div class="stat-card np reveal"><div class="tag">Net Impact</div><div class="big">1.2–1.8%</div><p>margin lost on every dirham of revenue, in a category where store EBITDA already sits at 3–5%.</p></div>
+      <div class="stat-card r d1">
+        <div class="tag">Labor Cost</div>
+        <div class="num">~36hrs</div>
+        <p>spent every week per store on paper tag swaps — at AED 25/hr that's <strong>AED 47K+/year</strong> per store.</p>
+      </div>
+      <div class="stat-card r d2">
+        <div class="tag">Pricing Errors</div>
+        <div class="num">8.3%</div>
+        <p>of paper-tag SKUs mismatch the POS at any moment — driving lost margin, refunds, and trust erosion.</p>
+      </div>
+      <div class="stat-card r d3">
+        <div class="tag">Promo Lag</div>
+        <div class="num">48hrs</div>
+        <p>average delay to roll a campaign across a 40-store chain — by then the competitor has already moved.</p>
+      </div>
+      <div class="stat-card r d4">
+        <div class="tag">Net Impact</div>
+        <div class="num" style="font-size:2.4rem">1.2–1.8%</div>
+        <p>margin lost on every dirham of revenue, in a category where store EBITDA already sits at 3–5%.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- SOLUTION / STACK -->
-<section class="sec-pad" id="solutions">
+<!-- SOLUTION -->
+<section class="sec" id="solutions">
   <div class="wrap">
-    <div class="reveal">
-      <div class="sec-label">02 — The Solution</div>
-      <h2 class="sec-title">One platform. Every shelf. <span class="grad">Updated in seconds.</span></h2>
-      <p class="sec-intro">Ermac is the full ESL stack — e-paper tags, secure gateways, and a cloud control plane that pushes a price change to every store in under 90 seconds, not 48 hours. Four layers, one integrated system.</p>
+    <div class="r"><div class="sec-label">The Platform</div></div>
+    <div class="r d1">
+      <h2>One platform. Every shelf. <span class="grad">Updated in seconds.</span></h2>
+      <p class="sec-intro">Ermac is the full ESL stack — e-paper tags, secure gateways, and a cloud control plane. Four layers, one contract, one SLA.</p>
     </div>
-    <div class="stack-grid">
-      <div class="layer reveal"><div class="lyr">Layer 01 · Hardware</div><h3>ESL Tags</h3><p>E-paper displays, 1.6"–13.3", monochrome & 3-color, 5–7 yr battery, NFC + BLE radio.</p><div class="metric"><div class="mv">5 SKUs</div><div class="mk">1.6" → 13.3"</div></div></div>
-      <div class="layer reveal"><div class="lyr">Layer 02 · Network</div><h3>Gateways</h3><p>PoE base stations covering 5,000+ tags per unit, 30m range, AES-128 encrypted, fail-over mesh.</p><div class="metric"><div class="mv">2–4</div><div class="mk">gateways / store</div></div></div>
-      <div class="layer reveal"><div class="lyr">Layer 03 · Software</div><h3>Ermac Cloud</h3><p>Multi-tenant SaaS — pricing rules engine, A/B promo testing, scheduled campaigns, full audit log.</p><div class="metric"><div class="mv">&lt;90s</div><div class="mk">change to shelf, chain-wide</div></div></div>
-      <div class="layer reveal"><div class="lyr">Layer 04 · Integration</div><h3>Ermac Connect</h3><p>Pre-built connectors to POS, ERP & inventory systems used across the GCC.</p><div class="metric"><div class="mv">6+</div><div class="mk">SAP · Oracle · Dynamics · Odoo</div></div></div>
+    <div class="layers">
+      <div class="layer r d1">
+        <div class="lnum">Layer 01 · Hardware</div>
+        <h3>ESL Tags</h3>
+        <p>E-paper displays, 1.6"–13.3", monochrome & 3-color, NFC + BLE 5.0 radio.</p>
+        <div class="kpi"><div class="kpi-val">5 SKUs</div><div class="kpi-lbl">1.6" → 13.3"</div></div>
+      </div>
+      <div class="layer r d2">
+        <div class="lnum">Layer 02 · Network</div>
+        <h3>Gateways</h3>
+        <p>PoE base stations covering 5,000+ tags per unit, 30m range, AES-128 encrypted, fail-over mesh.</p>
+        <div class="kpi"><div class="kpi-val">2–4</div><div class="kpi-lbl">gateways per store</div></div>
+      </div>
+      <div class="layer r d3">
+        <div class="lnum">Layer 03 · Software</div>
+        <h3>Ermac Cloud</h3>
+        <p>Multi-tenant SaaS — pricing rules, A/B promo testing, scheduled campaigns, full audit log.</p>
+        <div class="kpi"><div class="kpi-val">&lt;90s</div><div class="kpi-lbl">change to shelf, chain-wide</div></div>
+      </div>
+      <div class="layer r d4">
+        <div class="lnum">Layer 04 · Integration</div>
+        <h3>Ermac Connect</h3>
+        <p>Pre-built connectors to SAP, Oracle, MS Dynamics, Odoo, LS Retail, and custom REST APIs.</p>
+        <div class="kpi"><div class="kpi-val">6+</div><div class="kpi-lbl">POS / ERP connectors</div></div>
+      </div>
     </div>
-    <div class="flow-line reveal">FLOW — POS / ERP → <b>ERMAC CLOUD</b> → GATEWAY → ESL TAG &nbsp;·&nbsp; BIDIRECTIONAL · ENCRYPTED · AUDITED</div>
+    <p class="flow r">FLOW — POS / ERP → <b>ERMAC CLOUD</b> → GATEWAY → ESL TAG &nbsp;·&nbsp; BIDIRECTIONAL · ENCRYPTED · AUDITED</p>
   </div>
 </section>
 
 <!-- WHY ERMAC -->
-<section class="sec-pad" id="why">
+<section class="sec" id="why">
   <div class="wrap">
-    <div class="reveal">
-      <div class="sec-label">03 — Why Ermac Wins</div>
-      <h2 class="sec-title">Globals built the tech. <span class="grad">Nobody built the GCC layer.</span></h2>
-      <p class="sec-intro">Four compounding advantages that international vendors and local resellers can't match.</p>
+    <div class="r"><div class="sec-label">Why Ermac Wins</div></div>
+    <div class="r d1">
+      <h2>Globals built the tech. <span class="grad">Nobody built the GCC layer.</span></h2>
+      <p class="sec-intro">Four compounding advantages that international vendors and local resellers cannot match.</p>
     </div>
-    <div class="why-grid">
-      <div class="moat reveal"><div class="num">01</div><div><h3>Direct supplier relationships</h3><p>A Tier-1 manufacturer MoU lets us land 18–22% lower BOM than resellers, with priority allocation during supply tightness.</p></div></div>
-      <div class="moat reveal"><div class="num">02</div><div><h3>GCC operator DNA</h3><p>Founder & advisors have shipped retail tech across UAE, KSA, and Qatar — Arabic UI, RTL displays, e-invoicing & ZATCA from day one.</p></div></div>
-      <div class="moat reveal"><div class="num">03</div><div><h3>Bundled solution, single contract</h3><p>Hardware + software + integration + SLA under one PO. Globals push procurement to stitch four vendors. We win on simplicity.</p></div></div>
-      <div class="moat reveal"><div class="num">04</div><div><h3>Speed of deployment</h3><p>Ermac's reference deployment goes live in 18–24 days per store vs. industry-typical 60–90. Local team. Local stock. No customs queue.</p></div></div>
+    <div class="moats">
+      <div class="moat r d1">
+        <div class="moat-num">01</div>
+        <div><h3>Direct supplier relationships</h3><p>A Tier-1 manufacturer MoU lets us land 18–22% lower BOM than resellers, with priority allocation during supply tightness.</p></div>
+      </div>
+      <div class="moat r d2">
+        <div class="moat-num">02</div>
+        <div><h3>GCC operator DNA</h3><p>Founder & advisors have shipped retail tech across UAE, KSA, and Qatar — Arabic UI, RTL displays, e-invoicing & ZATCA from day one.</p></div>
+      </div>
+      <div class="moat r d3">
+        <div class="moat-num">03</div>
+        <div><h3>Bundled solution, single contract</h3><p>Hardware + software + integration + SLA under one PO. Globals push procurement to stitch four vendors. We win on simplicity.</p></div>
+      </div>
+      <div class="moat r d4">
+        <div class="moat-num">04</div>
+        <div><h3>Speed of deployment</h3><p>Reference deployment goes live in 18–24 days per store vs. industry-typical 60–90. Local team. Local stock. No customs queue.</p></div>
+      </div>
     </div>
-    <div class="traction reveal">
-      <div class="t"><div class="k">In Conversation</div><div class="v">3 chains</div><p>major regional grocery chains — combined 410+ stores across UAE & KSA — all booked second meetings.</p></div>
-      <div class="t"><div class="k">Hardware Partner</div><div class="v">Tier-1 MoU</div><p>Distribution + co-development with a top-3 global ESL manufacturer — preferred GCC partner.</p></div>
-      <div class="t"><div class="k">Market by 2030</div><div class="v">$1.24B</div><p>GCC smart-retail TAM, growing at 23.4% CAGR — outpacing global ESL growth on the back of Vision 2030.</p></div>
+    <div class="traction-grid r">
+      <div class="trac">
+        <div class="tk">Active Pipeline</div>
+        <div class="tv">3 Chains</div>
+        <p>Major regional grocery chains — combined 410+ stores across UAE & KSA — all booked second meetings.</p>
+      </div>
+      <div class="trac">
+        <div class="tk">Hardware Partner</div>
+        <div class="tv">Tier-1 MoU</div>
+        <p>Distribution + co-development with a top-3 global ESL manufacturer — preferred GCC partner status.</p>
+      </div>
+      <div class="trac">
+        <div class="tk">Market by 2030</div>
+        <div class="tv">$1.24B</div>
+        <p>GCC smart-retail TAM growing at 23.4% CAGR — outpacing global ESL growth on the back of Vision 2030.</p>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- PRODUCTS -->
-<section class="sec-pad" id="products">
+<section class="sec" id="products">
   <div class="wrap">
-    <div class="reveal">
-      <div class="sec-label">04 — Products</div>
-      <h2 class="sec-title">Two devices. <span class="grad">One ecosystem.</span></h2>
-      <p class="sec-intro">From the world's first five-screen ESL to a low-cost everyday tag — both managed from the same Ermac Cloud.</p>
+    <div class="r"><div class="sec-label">Products</div></div>
+    <div class="r d1">
+      <h2>Two devices. <span class="grad">One ecosystem.</span></h2>
+      <p class="sec-intro">From the world's first five-screen ESL to a low-cost everyday tag — both managed from the same Ermac Cloud platform.</p>
     </div>
-    <div class="stack-grid" style="grid-template-columns:1fr 1fr">
-      <div class="layer reveal"><div class="lyr">World's First Five-Screen ESL</div><h3>ERT01</h3><p>Five 2.13" E-ink screens in one compact casing — each independently customizable. Multi-color LED, replaceable battery, updates in seconds.</p><div class="metric"><div class="mv">5 × 2.13"</div><div class="mk">314.9mm · BLE 5.0 · 5yr battery</div></div></div>
-      <div class="layer reveal"><div class="lyr">Next-Gen Everyday Tag</div><h3>ZTag01</h3><p>An intelligent 2.66" ESL with low-power BLE 5.0, fast refresh, REST API, and secure data transmission — ideal for smart retail at scale.</p><div class="metric"><div class="mv">2.66"</div><div class="mk">360×184px · FCC/CE/RoHS · 5yr battery</div></div></div>
+    <div class="prod-grid">
+      <div class="prod r d1" id="prod-ert">
+        <div class="prod-img"><img src="assets/ert01.png" alt="ERT01"/></div>
+        <div class="prod-body">
+          <div class="prod-tag">World's First Five-Screen ESL</div>
+          <h3>ERT01</h3>
+          <p class="prod-line">Five 2.13" E-ink screens in one compact casing. Each operates independently with customizable content, multi-color LED, and a replaceable battery.</p>
+          <div class="specs">
+            <div class="spec"><div class="sv">5 × 2.13"</div><div class="sk">E-ink screens</div></div>
+            <div class="spec"><div class="sv">314.9mm</div><div class="sk">Dimensions</div></div>
+            <div class="spec"><div class="sv">5 years</div><div class="sk">Battery life</div></div>
+            <div class="spec"><div class="sv">BLE 5.0 + NFC</div><div class="sk">Connectivity</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="prod r d2" id="prod-ztag">
+        <div class="prod-img"><img src="assets/ztag01.png" alt="ZTag01"/></div>
+        <div class="prod-body">
+          <div class="prod-tag">Next-Gen Everyday Tag</div>
+          <h3>ZTag01</h3>
+          <p class="prod-line">An intelligent 2.66" ESL with low-power BLE 5.0, fast refresh, REST API, and secure data transmission — ideal for high-density retail deployments.</p>
+          <div class="specs">
+            <div class="spec"><div class="sv">2.66"</div><div class="sk">360 × 184px display</div></div>
+            <div class="spec"><div class="sv">86.5mm</div><div class="sk">Dimensions</div></div>
+            <div class="spec"><div class="sv">5 years</div><div class="sk">Battery life</div></div>
+            <div class="spec"><div class="sv">FCC / CE / RoHS</div><div class="sk">Certified</div></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- CTA -->
-<section class="cta-band" id="contact">
-  <div class="reveal">
+<section class="cta" id="contact">
+  <div class="cta-inner r">
+    <div class="sec-label" style="justify-content:center">Let's Talk</div>
     <h2>Let's get the GCC pricing <span class="grad">every shelf in real time.</span></h2>
     <p>Book a 20-minute walkthrough of the Ermac platform — or tell us about your store footprint and we'll scope a pilot.</p>
-    <div class="hero-actions" style="justify-content:center;animation:none;opacity:1;transform:none">
-      <a href="mailto:info@ermactechnologies.com" class="btn btn-primary">Email Us</a>
-      <a href="tel:+971506101940" class="btn btn-ghost">+971 50 610 1940</a>
+    <div class="hero-btns" style="animation:none;opacity:1;transform:none">
+      <a href="mailto:info@ermactechnologies.com" class="btn btn-fill">Email Us</a>
+      <a href="tel:+971506101940" class="btn btn-outline">+971 50 610 1940</a>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="foot-grid">
-    <div class="foot-logo">
-      <img src="assets/ermac_wordmark_white.png" alt="Ermac Technologies" />
-      <p>End-to-end electronic shelf label platform, purpose-built for retailers across the Gulf.</p>
+  <div class="foot">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img src="assets/ermac_wordmark_white.png" alt="Ermac Technologies"/>
+        <p>End-to-end electronic shelf label platform, purpose-built for retailers across the Gulf.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Platform</h4>
+        <a href="#solutions">ESL Tags</a>
+        <a href="#solutions">Gateways</a>
+        <a href="#solutions">Ermac Cloud</a>
+        <a href="#solutions">Ermac Connect</a>
+      </div>
+      <div class="foot-col">
+        <h4>Products</h4>
+        <a href="#products">ERT01</a>
+        <a href="#products">ZTag01</a>
+        <a href="#why">Why Ermac</a>
+      </div>
+      <div class="foot-col">
+        <h4>Contact</h4>
+        <a href="mailto:info@ermactechnologies.com">info@ermactechnologies.com</a>
+        <a href="tel:+971506101940">+971 50 610 1940</a>
+        <a href="#contact">Book a Demo</a>
+      </div>
     </div>
-    <div class="foot-col"><h4>Platform</h4><a href="#solutions">ESL Tags</a><a href="#solutions">Gateways</a><a href="#solutions">Ermac Cloud</a><a href="#solutions">Ermac Connect</a></div>
-    <div class="foot-col"><h4>Products</h4><a href="#products">ERT01</a><a href="#products">ZTag01</a><a href="#why">Why Ermac</a></div>
-    <div class="foot-col"><h4>Contact</h4><a href="mailto:info@ermactechnologies.com">info@ermactechnologies.com</a><a href="tel:+971506101940">+971 50 610 1940</a><a href="#contact">Book a Demo</a></div>
-  </div>
-  <div class="foot-bottom">
-    <span>© 2026 ERMAC Technologies LLC · All Rights Reserved</span>
-    <span>UAE · GCC</span>
+    <div class="foot-bottom">
+      <span>© 2026 ERMAC Technologies LLC · All Rights Reserved</span>
+      <span>UAE · GCC</span>
+    </div>
   </div>
 </footer>
 
-<script src="vendor/three.min.js"></script>
 <script>
-/* CDN fallback if local vendor file is missing */
-if(typeof THREE==='undefined'){
-  document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');
-}
-</script>
-<script>
-/* ---------- NAV behaviour ---------- */
+// Nav scroll
 const nav=document.getElementById('nav');
-addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>30));
-const burger=document.getElementById('burger'),navlinks=document.getElementById('navlinks');
-burger.addEventListener('click',()=>navlinks.classList.toggle('open'));
-navlinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>navlinks.classList.remove('open')));
+addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>40));
 
-/* ---------- scroll reveal ---------- */
+// Burger
+const burger=document.getElementById('burger'),nl=document.getElementById('navlinks');
+burger.addEventListener('click',()=>nl.classList.toggle('open'));
+nl.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nl.classList.remove('open')));
+
+// Scroll reveal
 const io=new IntersectionObserver((es)=>es.forEach((e,i)=>{
-  if(e.isIntersecting){setTimeout(()=>e.target.classList.add('in'),(i%4)*80);io.unobserve(e.target)}
-}),{threshold:.15});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}
+}),{threshold:.12});
+document.querySelectorAll('.r').forEach(el=>io.observe(el));
 
-/* ---------- THREE.JS 3D DEVICE SWAP ---------- */
-(function(){
-  const canvas=document.getElementById('stage');
-  const wrap=canvas.parentElement;
-  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-  const scene=new THREE.Scene();
-  const camera=new THREE.PerspectiveCamera(38,1,.1,100);
-  camera.position.set(0,0,9);
+// Device swap
+const devs=[
+  {id:'dev-ert',name:'ERT01',sub:"World's first 5-screen ESL"},
+  {id:'dev-ztag',name:'ZTag01',sub:'2.66" next-gen tag'}
+];
+let cur=0;
+const nameEl=document.getElementById('devName');
+const subEl=document.getElementById('devSub');
+const dots=[...document.querySelectorAll('.dev-dot')];
 
-  function size(){
-    const w=wrap.clientWidth,h=wrap.clientHeight;
-    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
-  }
+function showDev(idx){
+  const prev=document.getElementById(devs[cur].id);
+  const next=document.getElementById(devs[idx].id);
+  prev.classList.remove('active');prev.classList.add('hidden');
+  next.classList.remove('hidden');next.classList.add('active');
+  nameEl.textContent=devs[idx].name;
+  subEl.textContent=devs[idx].sub;
+  dots.forEach((d,i)=>d.classList.toggle('on',i===idx));
+  cur=idx;
+}
+dots.forEach(d=>d.addEventListener('click',()=>{showDev(+d.dataset.i);resetTimer();}));
 
-  // lighting
-  scene.add(new THREE.AmbientLight(0xffffff,.55));
-  const key=new THREE.DirectionalLight(0xffffff,1.1);key.position.set(4,6,8);scene.add(key);
-  const teal=new THREE.PointLight(0x61BDAF,2,40);teal.position.set(-6,3,6);scene.add(teal);
-  const purp=new THREE.PointLight(0x662D91,2.2,40);purp.position.set(6,-3,5);scene.add(purp);
-  const blue=new THREE.PointLight(0x348ACA,1.6,40);blue.position.set(0,5,-4);scene.add(blue);
-
-  // shared materials
-  const bodyMat=new THREE.MeshStandardMaterial({color:0xf4f6fa,metalness:.25,roughness:.45});
-  const frameMat=new THREE.MeshStandardMaterial({color:0x0a0c16,metalness:.6,roughness:.3});
-  function screenMat(hex){return new THREE.MeshStandardMaterial({color:hex,emissive:hex,emissiveIntensity:.35,metalness:0,roughness:.7})}
-  const screenColors=[0xeef2f7,0xff3b3b,0xeef2f7,0xff3b3b,0xeef2f7];
-
-  function roundedBox(w,h,d,r){
-    const shape=new THREE.Shape();
-    const x=-w/2,y=-h/2;
-    shape.moveTo(x+r,y);
-    shape.lineTo(x+w-r,y);shape.quadraticCurveTo(x+w,y,x+w,y+r);
-    shape.lineTo(x+w,y+h-r);shape.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-    shape.lineTo(x+r,y+h);shape.quadraticCurveTo(x,y+h,x,y+h-r);
-    shape.lineTo(x,y+r);shape.quadraticCurveTo(x,y,x+r,y);
-    const geo=new THREE.ExtrudeGeometry(shape,{depth:d,bevelEnabled:true,bevelThickness:.04,bevelSize:.04,bevelSegments:2,steps:1});
-    geo.center();return geo;
-  }
-
-  /* ---- ERT01: long 5-screen bar (314.9 x 34.6 x 11.9 mm -> scaled) ---- */
-  function buildERT01(){
-    const g=new THREE.Group();
-    const W=8.2,H=1.05,D=.36;
-    const body=new THREE.Mesh(roundedBox(W,H,D,.12),bodyMat);g.add(body);
-    // dark inset tray so screens have visible bezels around them
-    const tray=new THREE.Mesh(roundedBox(W-.34,H-.22,.05,.08),frameMat);
-    tray.position.set(0,0,D/2+.005);g.add(tray);
-    // 5 screens with mini price-tag content blocks
-    const sw=1.32,sh=.74,gap=.12;
-    const total=5*sw+4*gap;let sx=-total/2+sw/2;
-    for(let i=0;i<5;i++){
-      const sc=new THREE.Mesh(roundedBox(sw,sh,.05,.03),screenMat(screenColors[i]));
-      sc.position.set(sx,0,D/2+.04);g.add(sc);
-      // a small accent bar on each screen (price strip / header)
-      const accentCol = (i%2===0)?0xff3b3b:0x0a0c16;
-      const bar=new THREE.Mesh(roundedBox(sw*.7,.14,.045,.02),screenMat(accentCol));
-      bar.position.set(sx,-sh*.26,D/2+.06);g.add(bar);
-      sx+=sw+gap;
-    }
-    // NFC nub on left edge
-    const nfc=new THREE.Mesh(roundedBox(.2,.8,.1,.03),new THREE.MeshStandardMaterial({color:0x662D91,emissive:0x662D91,emissiveIntensity:.5,roughness:.4}));
-    nfc.position.set(-W/2+.16,0,D/2+.03);g.add(nfc);
-    g.scale.setScalar(.82);
-    g._restTilt={x:-0.18,y:-0.5}; // never edge-on; show the screen face
-    return g;
-  }
-
-  /* ---- ZTag01: compact single-screen tag (86.5 x 43.5 x 12.5 mm) ---- */
-  function buildZTag01(){
-    const g=new THREE.Group();
-    const W=3.4,H=1.75,D=.42;
-    const frame=new THREE.Mesh(roundedBox(W,H,D,.16),frameMat);g.add(frame);
-    const screen=new THREE.Mesh(roundedBox(W*.78,H*.74,.06,.08),screenMat(0xeef2f7));
-    screen.position.set(-.12,0,D/2+.02);g.add(screen);
-    // red promo strip
-    const strip=new THREE.Mesh(roundedBox(W*.74,.34,.065,.04),screenMat(0xff3b3b));
-    strip.position.set(-.12,-.42,D/2+.04);g.add(strip);
-    // LED dot
-    const led=new THREE.Mesh(new THREE.SphereGeometry(.12,24,24),new THREE.MeshStandardMaterial({color:0x348ACA,emissive:0x348ACA,emissiveIntensity:1.2}));
-    led.position.set(W/2-.34,H/2-.34,D/2+.04);g.add(led);
-    g.scale.setScalar(1.0);
-    g._restTilt={x:-0.1,y:-0.45};
-    return g;
-  }
-
-  const devices=[buildERT01(),buildZTag01()];
-  const names=['ERT01','ZTag01'];
-  devices.forEach(d=>{d.visible=false;scene.add(d)});
-  let current=0,swapping=false;
-  devices[0].visible=true;
-
-  const nameEl=document.getElementById('deviceName');
-  const dots=[...document.querySelectorAll('.swatch button')];
-
-  function showDevice(idx,instant){
-    if(idx===current&&!instant)return;
-    const next=devices[idx];
-    nameEl.textContent=names[idx];
-    dots.forEach((b,i)=>b.classList.toggle('active',i===idx));
-    if(instant){devices.forEach((d,i)=>d.visible=(i===idx));current=idx;return;}
-    swapping=true;
-    const targetScale=(idx===0?.82:1.0);
-    const fromScale=(current===0?.82:1.0);
-    next.visible=true;next.scale.setScalar(.4);
-    const from=devices[current];
-    const t0=performance.now();const dur=600;
-    (function anim(){
-      const t=Math.min((performance.now()-t0)/dur,1);
-      const e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
-      from.scale.setScalar(Math.max(.001,(1-e)*fromScale));
-      next.scale.setScalar(Math.max(.001,e*targetScale));
-      if(t<1)requestAnimationFrame(anim);
-      else{from.visible=false;from.scale.setScalar(fromScale);next.scale.setScalar(targetScale);current=idx;swapping=false;}
-    })();
-  }
-
-  dots.forEach(b=>b.addEventListener('click',()=>{showDevice(+b.dataset.dev);resetTimer();}));
-
-  let timer;
-  function resetTimer(){clearInterval(timer);timer=setInterval(()=>{if(!swapping)showDevice((current+1)%devices.length)},3000);}
-  resetTimer();
-
-  // pointer parallax
-  let px=0,py=0,tx=0,ty=0;
-  wrap.addEventListener('pointermove',e=>{
-    const r=wrap.getBoundingClientRect();
-    tx=((e.clientX-r.left)/r.width-.5)*.5;
-    ty=((e.clientY-r.top)/r.height-.5)*.5;
-  });
-  wrap.addEventListener('pointerleave',()=>{tx=0;ty=0});
-
-  devices.forEach(d=>{d._baseRotY=0; if(!d._restTilt)d._restTilt={x:-0.15,y:-0.5};});
-  const clock=new THREE.Clock();
-  function loop(){
-    const t=clock.getElapsedTime();
-    px+=(tx-px)*.05;py+=(ty-py)*.05;
-    devices.forEach(d=>{
-      if(!d.visible)return;
-      // gentle oscillation around a tilted rest pose so the screen face always reads
-      d.rotation.y = d._restTilt.y + Math.sin(t*.55)*.38 - px;
-      d.rotation.x = d._restTilt.x + Math.sin(t*.4)*.08 + py;
-      d.position.y = Math.sin(t*.9)*.16;
-    });
-    renderer.render(scene,camera);
-    requestAnimationFrame(loop);
-  }
-  size();loop();
-  addEventListener('resize',size);
-})();
+let timer;
+function resetTimer(){
+  clearInterval(timer);
+  timer=setInterval(()=>showDev((cur+1)%devs.length),3500);
+}
+resetTimer();
 </script>
 </body>
 </html>
